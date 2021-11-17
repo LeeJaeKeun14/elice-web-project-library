@@ -79,6 +79,9 @@
 
 ![002](image/DB구조.png)
 
+- table 구조
+
+
 ***
 
 ## 프로젝트 팀원 역활
@@ -93,8 +96,14 @@
 
 ## 프로젝트 버전
 
-- 0.0.1
+- 0.0.01
   - DB models 구성
     - User, Book, Book_stock, Book_rental, Book_evaluation
 
 ***
+
+- 0.0.02
+  - local 환경에 DB 설치
+![003](image/DB모델.png)
+  - mysql key 외부 파일에서 읽어오는 형식으로 노출 제거
+  - 메인 페이지, 로그인, 로그아웃 프로토타입 설계
