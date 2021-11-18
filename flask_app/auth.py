@@ -42,7 +42,7 @@ def signup():
         if message is None:
             # 유저 테이블에 추가
 
-            pw_hash = bcrypt.generate_password_hash(user_pw)
+            pw_hash = Bcrypt.generate_password_hash(user_pw)
             
             user = User(user_id, pw_hash, user_name, user_nickname)
             db.session.add(user)
@@ -67,7 +67,7 @@ def signin():
 
             if user is None:
                 message, messageType = '등록되지 않은 계정입니다.', 'danger'
-            elif not bcrypt.check_password_hash(user.user_pw, user_pw):
+            elif not Bcrypt.check_password_hash(user.user_pw, user_pw):
                 message, messageType = '비밀번호가 틀렸습니다.', 'danger'
 
             if message is None:

@@ -25,13 +25,14 @@ class User(db.Model):
 class Book(db.Model):
     __tablename__ = 'book'
     id = db.Column(db.Integer,  primary_key=True, autoincrement=True)
-    book_name = db.Column(db.String(100), nullable = False, unique=True)
+    book_name = db.Column(db.String(100), nullabl =False)
     book_publisher = db.Column(db.String(40), nullable=False)
     book_author = db.Column(db.String(30), nullable=False)
     book_publication_date = db.Column(db.DateTime, nullable=False)
-    book_pages = db.Column(db.Integer, nullable = False)
+    book_pages = db.Column(db.Integer, nullable=False)
     book_isbn = db.Column(db.BigInteger, nullable=False)
     book_description = db.Column(db.Text(), nullable=False)
+    book_link = db.Column(db.String(60), nullable=False)
     
     # 책 보유 외부키
     bookstock = db.relationship("Book_stock", backref="book")
@@ -39,7 +40,7 @@ class Book(db.Model):
     bookevaluation = db.relationship("Book_evaluation", backref="book")
     
     def __init__(self,book_name,book_publisher,book_author,book_publication_date,
-                book_pages, book_isbn, book_description):
+                book_pages,book_isbn,book_description,book_link):
         self.book_name = book_name
         self.book_publisher = book_publisher
         self.book_author = book_author
@@ -47,12 +48,13 @@ class Book(db.Model):
         self.book_pages = book_pages
         self.book_isbn = book_isbn
         self.book_description = book_description
+        self.book_link=book_link
 
 # 책 보유 정보
 class Book_stock(db.Model):
     __tablename__ = 'book_stock'
     book_serial_number = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    book_name = db.Column(db.String(100), db.ForeignKey("book.book_name"), nullable = False)
+    book_id = db.Column(db.String(100), db.ForeignKey("book.id"), nullable = False)
     is_rental = db.Column(db.Boolean, nullable = False)
 
     # 대여_책 외부키
@@ -66,7 +68,7 @@ class Book_stock(db.Model):
 class Book_rental(db.Model):
     __tablename__ = 'book_rental'
     id = db.Column(db.Integer,  primary_key=True, autoincrement=True)
-    user_nickname = db.Column(db.String(30), db.ForeignKey("user.user_nickname"), 
+    user_id = db.Column(db.String(30), db.ForeignKey("user.id"), 
                             nullable = False)
     book_serial_number = db.Column(db.Integer, db.ForeignKey("book_stock.book_serial_number"), 
                             nullable = False)
@@ -86,9 +88,8 @@ class Book_rental(db.Model):
 class Book_evaluation(db.Model):
     __tablename__ = 'book_evaluation'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    book_name = db.Column(db.String(100), db.ForeignKey("book.book_name"), nullable = False)
-    user_nickname = db.Column(db.String(30), db.ForeignKey("user.user_nickname"), 
-                            nullable = False)
+    book_id = db.Column(db.String(100), db.ForeignKey("book.id"), nullable = False)
+    user_id = db.Column(db.String(30), db.ForeignKey("user.id"), nullable = False)
     book_evaluation = db.Column(db.Integer, nullable = False)
     evaluation_contente = db.Column(db.Text(), nullable = False)
     evaluation_time = db.Column(db.DateTime, default=datetime.utcnow)
