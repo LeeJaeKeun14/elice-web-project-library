@@ -14,10 +14,6 @@ def load_logged_in_user():
     else:
         g.user = db.session.query(User).filter(User.user_id == user_id).first()
 
-@api_auth.route("/")
-def index():
-    return render_template('index.html')
-
 @api_auth.route('/signup', methods=('GET', 'POST'))
 def signup():
     if request.method == 'POST':
@@ -72,16 +68,16 @@ def signin():
             if message is None:
                 session.clear()
                 session['user_id'] = user['user_id']
-                return redirect(url_for('auth.index'))
+                return redirect(url_for('index.index'))
 
             flash(message=message, category=messageType)
         return render_template('signin.html')
 
-    return redirect(url_for('auth.index'))
+    return redirect(url_for('index.index'))
 
 
 
 @api_auth.route('/signout')
 def signout():
     session.clear()
-    return redirect(url_for('auth.index'))
+    return redirect(url_for('index.index'))

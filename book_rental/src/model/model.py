@@ -60,8 +60,8 @@ class Book_stock(db.Model):
     # 대여_책 외부키
     bookrental = db.relationship("Book_rental", backref="book_stock")
     
-    def __init__(self,book_name,is_rental):
-        self.book_name = book_name
+    def __init__(self,book_id,is_rental):
+        self.book_id = book_id
         self.is_rental = is_rental
 
 # 책 대여 정보
@@ -77,8 +77,8 @@ class Book_rental(db.Model):
     return_date = db.Column(db.DateTime)
     is_return = db.Column(db.Boolean, nullable = False)
     
-    def __init__(self,user_nickname,book_serial_number,book_name,return_date,is_return):
-        self.user_nickname = user_nickname
+    def __init__(self,user_id,book_serial_number,book_name,return_date,is_return):
+        self.user_id = user_id
         self.book_serial_number = book_serial_number
         self.book_name = book_name
         self.return_date = return_date
@@ -94,8 +94,8 @@ class Book_evaluation(db.Model):
     evaluation_contente = db.Column(db.Text(), nullable = False)
     evaluation_time = db.Column(db.DateTime, default=datetime.utcnow)
     
-    def __init__(self,book_name,user_nickname,book_evaluation,evaluation_contente):
-        self.book_name = book_name
-        self.user_nickname = user_nickname
+    def __init__(self,book_id,user_id,book_evaluation,evaluation_contente):
+        self.book_id = book_id
+        self.user_id = user_id
         self.book_evaluation = book_evaluation
         self.evaluation_contente = evaluation_contente

@@ -5,11 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>도서관 대출 서비스</title>
+    <style>
+        img {
+            width: 80px;
+            height: 120px;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div id="nav">
-            <h2>엘리스 도서관</h2>
+            <a href="{{ url_for('index.index') }}"><h2>엘리스 도서관</h2></a>
         </div>
         <div>
             공지사항
@@ -18,14 +24,22 @@
             신간도서
         </div>
         <div>
-            <a href="{{ url_for('auth.signup') }}"><div>도서관 로그인</div></a>
-            <a href="{{ url_for('auth.signin') }}">회원가입</a>
+            <a href="{{ url_for('auth.signin') }}"><div>도서관 로그인</div></a>
+            <a href="{{ url_for('auth.signup') }}">회원가입</a>
         </div>
     </header>
-
-
     <main>
-
+        <div>
+            신간도서
+        </div>
+        <div>
+            {% for b in data["new_book"] %}
+                <div>
+                    <p>{{ b.book_name }}</p>
+                    <img src="{{ b.book_link }}" alt="{{ b.id }}.png">
+                </div>
+            {% endfor %}
+        </div>
     </main>
 
     <footer>

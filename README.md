@@ -34,6 +34,7 @@
 ### 프로젝트 필요 기능
 
 - 해야할 기능
+  - Book_rental 에 정규성 위배?
 
 ***
 
@@ -135,6 +136,8 @@
       - `During handling of the above exception, another exception occurred:`
       - `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
         - flask-sqlalchemy 해결방법을 참고하여 해결
+    - book_stock 데이터 삽입
+      - 이후 유저권한 추가하여 관리자가 부족한 책 구입할 수 있는 기능과, 손상된 책을 처분할 수 있도록 table 분리.
   - 디버그 모드 추가하기
   - 프로젝트 일정 만들기
   - 문자열 NN 속성은 빈 문자열 넣는식으로 default값 넣기.
