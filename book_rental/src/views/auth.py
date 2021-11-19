@@ -1,11 +1,12 @@
 from flask import Blueprint, jsonify, request, session, flash, redirect, url_for, render_template, g
 from flask_bcrypt import Bcrypt
-from models import User, Book, Book_stock, Book_rental, Book_evaluation
-from db_connect import db
+from book_rental.src.model import User, Book, Book_stock, Book_rental, Book_evaluation
+from book_rental.create import db
+from . import api_auth
 
-bp = Blueprint("auth", __name__)
+# api_auth = Blueprint("auth", __name__)
 
-@bp.before_app_request
+@api_auth.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
     if user_id is None:
@@ -13,13 +14,11 @@ def load_logged_in_user():
     else:
         g.user = db.session.query(User).filter(User.user_id == user_id).first()
 
-@bp.route("/")
+@api_auth.route("/")
 def index():
-    
     return render_template('index.html')
 
-
-@bp.route('/signup', methods=('GET', 'POST'))
+@api_auth.route('/signup', methods=('GET', 'POST'))
 def signup():
     if request.method == 'POST':
         user_id = request.form.get('user_id', None)
@@ -48,14 +47,14 @@ def signup():
             db.session.add(user)
             db.session.commit()
             
-            return redirect(url_for('signin'))
+            return redirect(url_for('auth.signin'))
         
         flash(message=message, category=messageType)
 
     return render_template('signup.html')
 
 
-@bp.route('/signin', methods=('GET', 'POST'))
+@api_auth.route('/signin', methods=('GET', 'POST'))
 def signin():
     if session.get('user_id') is None:
         if request.method == 'POST':
@@ -73,16 +72,16 @@ def signin():
             if message is None:
                 session.clear()
                 session['user_id'] = user['user_id']
-                return redirect(url_for('index'))
+                return redirect(url_for('auth.index'))
 
             flash(message=message, category=messageType)
         return render_template('signin.html')
 
-    return redirect(url_for('index'))
+    return redirect(url_for('auth.index'))
 
 
 
-@bp.route('/signout')
+@api_auth.route('/signout')
 def signout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('auth.index'))

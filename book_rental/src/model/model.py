@@ -1,4 +1,4 @@
-from db_connect import db
+from book_rental.create import db
 from datetime import datetime
 
 # 유저 정보
@@ -25,7 +25,7 @@ class User(db.Model):
 class Book(db.Model):
     __tablename__ = 'book'
     id = db.Column(db.Integer,  primary_key=True, autoincrement=True)
-    book_name = db.Column(db.String(100), nullabl =False)
+    book_name = db.Column(db.String(100), nullable=False)
     book_publisher = db.Column(db.String(40), nullable=False)
     book_author = db.Column(db.String(30), nullable=False)
     book_publication_date = db.Column(db.DateTime, nullable=False)

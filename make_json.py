@@ -11,6 +11,7 @@ json_data = {
         "pw" : ""
     }
 }
+print(json_data)
 
 with open(file_path, 'w', encoding='utf-8') as make_file:
     json.dump(json_data, make_file, indent="\t")
