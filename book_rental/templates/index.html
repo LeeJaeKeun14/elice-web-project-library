@@ -22,6 +22,15 @@
         </div>
         <div>
             신간도서
+            {% for b in data["new_book"] %}
+                <div>
+                    <p>{{ b.book_name[:10] }}
+                        {% if b.book_name[10:] %}
+                        ...
+                        {% endif %}
+                    </p>
+                </div>
+            {% endfor %}
         </div>
         <div>
             <a href="{{ url_for('auth.signin') }}"><div>도서관 로그인</div></a>
@@ -30,12 +39,19 @@
     </header>
     <main>
         <div>
+            추천도서
+        </div>
+        <div>
             신간도서
         </div>
         <div>
             {% for b in data["new_book"] %}
                 <div>
-                    <p>{{ b.book_name }}</p>
+                    <p>{{ b.book_name[:10] }}
+                        {% if b.book_name[10:] %}
+                        ...
+                        {% endif %}
+                    </p>
                     <img src="{{ b.book_link }}" alt="{{ b.id }}.png">
                 </div>
             {% endfor %}
