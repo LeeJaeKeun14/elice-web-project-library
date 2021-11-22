@@ -16,6 +16,7 @@
   - [프로젝트 구성도](#프로젝트-구성도)
   - [프로젝트 팀원 역활](#프로젝트-팀원-역활)
   - [프로젝트 버전](#프로젝트-버전)
+  - [에러 트러블 슈팅](#에러-트러블-슈팅)
 
 ***
 
@@ -35,11 +36,11 @@
 
 - 해야할 기능
   - Book_rental 에 정규성 위배?
-  - 회원가입 조건 완성하기
-    - 비밀번호 조건
-  - 로그인 기능 추가하기
-  - 로그아웃 기능 추가하기
-  - 메인 페이지 만들기
+  - 메인페이지 (별점이 없을경우 출력 방법)
+    - 고민 1 데이터를 강제 삽입
+  - 대여기능
+  - 반납페이지기능
+  - 책정보 상세페이지
 
 ***
 
@@ -137,10 +138,6 @@
     - html 에서의 url_for 수정해야하는점 파악
   - DB 수정
     - 외부키 전부 개인키로 바꾸기
-    - 구조 변화로 인한 error 처리
-      - `During handling of the above exception, another exception occurred:`
-      - `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
-        - flask-sqlalchemy 해결방법을 참고하여 해결
     - book_stock 데이터 삽입
       - 이후 유저권한 추가하여 관리자가 부족한 책 구입할 수 있는 기능과, 손상된 책을 처분할 수 있도록 table 분리.
   - 디버그 모드 추가하기
@@ -158,3 +155,72 @@
     - 아이디, 비밀번호, 이름, 닉네임 조건 추가
   - 회원가입을 위한 정규표현식 작성중
     - 비밀번호 영문, 숫자, 특수문자의 복잡한 규칙의 정규표현 방법 고민
+
+***
+
+- 0.0.05
+  - 유저이름, 유저닉네임 100자로 제한 수정.(외국인 미들내임 까지 하면 30자 초과 가능)
+  - 출판사, 작가 100자로 제한 수정(외국 서적일 경우 초과 가능)
+  - 회원가입 기능 추가
+    - 아이디, 비밀번호, 이름, 닉네임 조건 추가
+  - 로그인 기능 추가
+    - DB에서 아이디를 가져와 확인하고 로그인
+  - 메인페이지 추가
+    - 로그인 회원가입 링크, 로그인시 로그인 유저 정보와 로그아웃 링크
+    - 신간 순서별 책 나열
+  - 상세페이지 추가
+    - 책 상세정보 출력
+
+## 에러 트러블 슈팅
+
+- 0.0.04
+  - 구조 변화로 인한 error 처리
+    - `During handling of the above exception, another exception occurred:`
+    - `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
+      - flask-sqlalchemy 해결방법을 참고하여 해결
+
+- 0.0.05
+  - 플라스크 세션 에러
+    - `RuntimeError: The session is unavailable because no secret key was set.  Set the secret_key on the application to something unique and secret.`
+    - [참고 구글링](https://www.google.com/search?q=RuntimeError%3A+The+session+is+unavailable+because+no+secret+key+was+set.++Set+the+secret_key+on+the+application+to+something+unique+and+secret.&rlz=1C1CHBD_enKR901KR901&sxsrf=AOaemvKt0NGwBxmtqW3asXVzyy2RPwru7w%3A1637549431877&ei=dwWbYeXrNKrf2roP_YW4mA0&ved=0ahUKEwilg8GB-6r0AhWqr1YBHf0CDtMQ4dUDCA4&uact=5&oq=RuntimeError%3A+The+session+is+unavailable+because+no+secret+key+was+set.++Set+the+secret_key+on+the+application+to+something+unique+and+secret.&gs_lcp=Cgdnd3Mtd2l6EANKBAhBGABQAFgAYKUEaABwAngAgAEAiAEAkgEAmAEAoAECoAEBwAEB&sclient=gws-wiz)
+
+    ```python
+      app.secret_key = 'super secret key'
+      app.config['SESSION_TYPE'] = 'filesystem'
+    ```
+
+  - 암호화 에러
+    - `bcrypt = Bcrypt()` 객체를 선언하지 않음
+  - 디버그모드 설정 에러
+    - config 설정, vscode launch설정 등 많은 방법으로 디버그 모드를 실행하였지만 내부 디버그가 출력되지 않음.
+      - 이유는 launch.json 에서 `"--no-debugger"` 내부 디버그 사용하지 않는 설정이 있었음.
+  - 조건문 범위설정 에러
+
+    ```python
+        ## 비밀번호 검증
+      elif len(user_pw) < 10:
+          ## 최소조건 8자 만족하지 못함
+          if len(user_pw) < 8:
+              message, messageType = '비밀번호를 8자 이상, 영문, 숫자, 특수문자를 포함되게 만들어야 합니다.', 'danger'
+          ## 영문, 숫자, 특수문자 조건
+          elif password.match(user_pw) == None:
+              message, messageType = '비밀번호를 영문, 숫자, 특수문자를 포함되게 만들어야 합니다.', 'danger'
+      ## 영문 숫자, 영문 특수문자, 숫자 특수문자를 하나라도 만족하지 않을경우 
+      elif pw_check_1.match(user_pw) == None and pw_check_2.match(user_pw) == None and pw_check_3.match(user_pw) == None:
+          message, messageType = '비밀번호가 영문, 숫자, 특수문자 중 2개이상을 포함되게 만들어야 합니다.', 'danger'
+    ```
+  
+  - 2가지 종류의 비밀번호 조건을 만족시키기 위해 광범위한 조건을 설정 하였는데 10자 미만일 경우 조건에 포함되어 다른 조건(이름, 닉네임 조건을 무시해버림)
+    - 비밀번호 체크 리스트
+      - 아이디 중복 : ✅
+      - 아이디 크기(30자) : ✅
+      - 아이디 이메일형태 : ✅
+      - 비밀번호 8자 이하 : ✅
+      - 비밀번호 8자 이상 10자 이하 영문, 숫자, 특수문자 사용 : ✅
+      - 비밀번호 10자 이상 영문, 숫자, 특수문자중 2개 이상 사용 : ✅
+      - 비밀번호 비밀번호 확인 비교 : ✅
+      - 한글과 영문으로만 작성 : ✅
+      - 닉네임 중복 : ✅
+    - 정규표현식 `^(?=.*[a-zA-Z])(?=.*\d)[^ \t\n\r\f\v]{10,}` 으로 개수를 `len(user_pw)`로 따로 조건을 만들지만 중복 조건으로 8자 이상의 특수문자 모두 사용한 비밀번호가 10자 제한에 걸리는 오류
+    - `flask Did you mean 'static' instead?`
+      - 새로운 views 추가하면서 왜 연결이 되지 않을까 고민하다 그져 import를 하지 않았다는 간단한 문제를 한참이나 해결하지 못했다...

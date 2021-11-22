@@ -7,8 +7,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.String(30), nullable=False, unique=True)
     user_pw = db.Column(db.Text(), nullable=False)
-    user_name = db.Column(db.String(20), nullable=False)
-    user_nickname = db.Column(db.String(30), nullable=False, unique=True)
+    user_name = db.Column(db.String(100), nullable=False)
+    user_nickname = db.Column(db.String(100), nullable=False, unique=True)
     
     # 책 대여 외부키
     bookrental = db.relationship("Book_rental", backref="user")
@@ -68,7 +68,7 @@ class Book_stock(db.Model):
 class Book_rental(db.Model):
     __tablename__ = 'book_rental'
     id = db.Column(db.Integer,  primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(30), db.ForeignKey("user.id"), 
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), 
                             nullable = False)
     book_serial_number = db.Column(db.Integer, db.ForeignKey("book_stock.book_serial_number"), 
                             nullable = False)
@@ -88,8 +88,8 @@ class Book_rental(db.Model):
 class Book_evaluation(db.Model):
     __tablename__ = 'book_evaluation'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    book_id = db.Column(db.String(100), db.ForeignKey("book.id"), nullable = False)
-    user_id = db.Column(db.String(30), db.ForeignKey("user.id"), nullable = False)
+    book_id = db.Column(db.Integer, db.ForeignKey("book.id"), nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable = False)
     book_evaluation = db.Column(db.Integer, nullable = False)
     evaluation_contente = db.Column(db.Text(), nullable = False)
     evaluation_time = db.Column(db.DateTime, default=datetime.utcnow)

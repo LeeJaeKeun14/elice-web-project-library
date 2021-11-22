@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -30,8 +29,8 @@
                         <span class="ps-2 fs-4">엘리스 도서관</span>
                     </a>
                     <form class="d-flex">
-                        <a href="{{ url_for('auth.signin') }}">
-                            <button type="button" class="btn btn-outline-primary ms-1">로그인</button>
+                        <a style="text-decoration: none;" href="{{ url_for('auth.signin') }}">
+                            <button style="background-color: #524fa1;" type="button" class="btn ms-1 text-white">로그인</button>
                         </a>
                     </form>
                 </div>
@@ -94,7 +93,7 @@
                             </div>
 
                             <div class="col-auto">
-                                <button type="submit" class="btn btn-primary btn-lg">회원가입</button>
+                                <button style="background-color: #524fa1;" type="submit" class="btn btn-primary btn-lg">회원가입</button>
                             </div>
                         </form>
                     </div>

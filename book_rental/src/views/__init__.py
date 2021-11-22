@@ -8,3 +8,6 @@ from .auth import *
 
 api_index = Blueprint("index", __name__)
 from .index import *
+
+api_book = Blueprint("book", __name__, url_prefix='/book')
+from .book import *

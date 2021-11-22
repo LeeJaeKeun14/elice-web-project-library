@@ -4,57 +4,123 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    
     <title>도서관 대출 서비스</title>
     <style>
-        img {
-            width: 80px;
-            height: 120px;
+        .img {
+            width: 138px;
+            height: 192px;
+        }
+        .margin_b0 {
+            margin-bottom: 0px;
+        }
+        .book_box {
+            display: inline-block;
+            width: 160px;
+            height: 240px; 
+            margin: 5px;
+            padding-top: 5px;
+
+            border: 1px solid #524fa1; 
+            background-color: #e2dfff;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div id="nav">
-            <a href="{{ url_for('index.index') }}"><h2>엘리스 도서관</h2></a>
-        </div>
-        <div>
-            공지사항
-        </div>
-        <div>
-            신간도서
-            {% for b in data["new_book"] %}
-                <div>
-                    <p>{{ b.book_name[:10] }}
-                        {% if b.book_name[10:] %}
-                        ...
-                        {% endif %}
-                    </p>
+    <header style="background-color: #ffffff;">
+        <div style="margin: 0px; padding-top: 0px;" class="container-fluid">
+            <nav class="navbar navbar-light border-bottom mb-4">
+                <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+                    <img class="d-flex align-items-cente" src="/static/image/logo.png" height="50">
+                    <span class="ps-2 fs-4">엘리스 도서관</span>
+                </a>
+            </nav>
+            
+            <div style="background-color: #f0f0f0;" class="mb-3 row justify-content-center">
+                <div style="margin: 10px 0px;" class="col-sm-4 border">
+                    <div class="container-fluid text-center border-bottom">
+                        <h1 class="fs-4 fw-bold margin_b0">공지사항</h1>
+                    </div>
+                    <p class="margin_b0">회원가입시 주의사항</p>
+                    <p class="margin_b0">도서 대출기한 참고사항</p>
+                    <p class="margin_b0">도서관 오프라인 오시는길</p>
+                    <p class="margin_b0">책 파손시 신청방법</p>
+                    <p class="margin_b0">도서 신청 방법</p>
                 </div>
-            {% endfor %}
-        </div>
-        <div>
-            <a href="{{ url_for('auth.signin') }}"><div>도서관 로그인</div></a>
-            <a href="{{ url_for('auth.signup') }}">회원가입</a>
+                <div style="margin: 10px 0px;" class="col-sm-4 border">
+                    
+                    <div class="container-fluid text-center border-bottom">
+                        <h1 class="fs-4 fw-bold margin_b0">신간도서</h1>
+                    </div>
+                    {% for b in data["new_book"] %}
+                        <div>
+                            <p class="margin_b0">
+                                {{ b.book_name[:14] }}
+                                {% if b.book_name[14:] %}
+                                ...
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div style="margin: 10px 0px; margin-left: 20px;" class="col-sm-3 border">
+                    
+                    {% if g.user == None %}
+                    <div style="margin-top: 20px; height: 90px;">
+                        <a style="text-decoration: none;" href="{{ url_for('auth.signin') }}">
+                            <div style="background-color: #524fa1;" class="p-4 mb-2 rounded-3 text-center text-white">
+                                <h3 style="font-size: 20px;" class="fw-bold">도서관 로그인</h2></div></a>
+                    </div>
+                    <div style="text-align: right;">
+                        <a href="{{ url_for('auth.signup') }}">회원가입</a>
+                    </div>
+                    {% else %}
+                    <div style="margin-top: 20px; height: 90px;">
+                        <p style="font-weight: bold" class="margin_b0">{{ g.user.user_nickname }}님</p>
+                        <p style="font-size: 12px; margin-bottom: 5px">{{ g.user.user_id }}</p>
+                        <p class="margin_b0">
+                            <a style="text-decoration: none;" href="">대여기록</a>
+                            <a style="text-decoration: none;" href="">반납하기</a>
+                        </p>
+                        <p class="margin_b0">대여중인 책:</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <a href="{{ url_for('auth.signout') }}">로그아웃</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </header>
     <main>
         <div>
-            추천도서
+            <div style="margin: 0px 5%; border-bottom: 2px solid #524fa1" class="mb-3 row justify-content-center">
+                추천도서
+            </div>
         </div>
         <div>
-            신간도서
-        </div>
-        <div>
-            {% for b in data["new_book"] %}
-                <div>
-                    <p>{{ b.book_name[:10] }}
-                        {% if b.book_name[10:] %}
-                        ...
-                        {% endif %}
-                    </p>
-                    <img src="{{ b.book_link }}" alt="{{ b.id }}.png">
-                </div>
-            {% endfor %}
+            <div style="margin: 0px 5%; border-bottom: 2px solid #524fa1" class="mb-3 row justify-content-center">
+                신간도서
+            </div>
+            <div style="background-color: #efeff6;" class="p-4 mb-3 row justify-content-center" >
+                {% for b in data["new_book"] %}
+                    <div class="book_box">
+                        <a href="{{ url_for('book.detail', book_id=b.id) }}">
+                            <img class="img border" src="{{ b.book_link }}" alt="{{ b.id }}.png">
+                            <p style="font-size: 12px;">
+                                {{ b.book_name[:10] }}
+                                {% if b.book_name[10:] %}
+                                ...
+                                {% endif %}
+                            </p>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+
         </div>
     </main>
 

@@ -4,8 +4,6 @@ from book_rental.src.model import User, Book, Book_stock, Book_rental, Book_eval
 from book_rental.create import db
 from . import api_index
 
-# api_auth = Blueprint("auth", __name__)
-
 @api_index.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
@@ -19,6 +17,13 @@ def index():
     
     new_book = db.session.query(Book).order_by(Book.book_publication_date.desc()).all()
     new_book = new_book[:5]
+    
+    # eval_book = db.session.query(Book, Book_evaluation).\
+    #                 filter(Book.id==Book_evaluation.book_id).\
+    #                 all()
+    # for a, b in eval_book:
+    #     print(a, b)
+
     data = {
         "new_book":new_book
     }
