@@ -108,10 +108,41 @@ def signin():
                 return redirect(url_for('index.index'))
 
             flash(message=message, category=messageType)
-        return render_template('signin.html')
+        return render_template('signin.html', method="")
     # 로그인 시 메인화면으로 이동
     return redirect(url_for('index.index'))
 
+@api_auth.route('/book_signin/<book_id>/<method>', methods=('GET', 'POST'))
+def book_signin(book_id, method):
+    if session.get('user_id') is None:
+        if request.method == 'POST':
+            user_id = request.form.get('user_id', None)
+            user_pw = request.form.get('user_pw', None)
+            
+            user = db.session.query(User).filter(User.user_id == user_id).first()
+            message, messageType = None, None
+
+            print(user_id)
+            print(user.id)
+            if user is None:
+                message, messageType = '등록되지 않은 계정입니다.', 'danger'
+            elif not bcrypt.check_password_hash(user.user_pw, user_pw):
+                message, messageType = '비밀번호가 틀렸습니다.', 'danger'
+
+            if message is None:
+                session.clear()
+                session['user_id'] = user.id
+                # method를 확인하여 해당 링크로 이동
+                if method == "rental":
+                    return redirect(url_for('book.rental', book_id=book_id))
+                return redirect(url_for('book.detail', book_id=book_id))
+
+            flash(message=message, category=messageType)
+        return render_template('signin.html', method=method)
+    # method를 확인하여 해당 링크로 이동
+    if method == "rental":
+        return redirect(url_for('book.rental', book_id=book_id))
+    return redirect(url_for('book.detail', book_id=book_id))
 
 
 @api_auth.route('/signout')

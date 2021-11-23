@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    
+    <title>도서관 대출 서비스</title>
+    <style>
+        .img {
+            width: 138px;
+            height: 192px;
+        }
+        .margin_b0 {
+            margin-bottom: 0px;
+        }
+        .book_box {
+            display: inline-block;
+            width: 160px;
+            height: 250px; 
+            margin: 5px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+
+            border: 1px solid #524fa1; 
+            background-color: #e2dfff;
+        }
+    </style>
+</head>
+<body>
+    <header style="background-color: #ffffff;">
+        <div style="margin: 0px; padding-top: 0px;" class="container-fluid">
+            <nav class="navbar navbar-light border-bottom mb-4">
+                <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+                    <img class="d-flex align-items-cente" src="/static/image/logo.png" height="50">
+                    <span class="ps-2 fs-4">엘리스 도서관</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        
+        <div class="container-fluid">
+
+            <table class="table table-hover table-bordered">
+                <tbody id="resultBody">
+                </tbody>
+            </table>
+
+            <nav>
+                <ul class="pagination justify-content-center" id="pagination">
+                    <li class="page-item">
+                        <a class="page-link" data-page="1" href="#" aria-label="Previous">
+                        &laquo;
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" data-page="1" href="#">1</a></li>
+                    <li class="page-item" id="last-page">
+                        <a class="page-link" href="#" aria-label="Next">
+                        &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <script>
+                var resultBody = document.getElementById('resultBody');
+                var pagination = document.getElementById('pagination')
+                var lastPage = document.getElementById('last-page')
+        
+                var searchPage = 1;
+        
+                function searchCenter() {
+                    $.ajax({
+                    type: "GET",
+                    url: "/book/return_book_list?page=" + searchPage,
+                    dataType: 'json',
+                    success: function (res) {
+        
+                        // 기존 페이지 제거
+                        for (var i = 0; i < pagination.children.length; i++) {
+                            if (i === 0) continue;
+                            else if (pagination.children[i] === lastPage) break;
+                            pagination.removeChild(pagination.children[i--]);
+                        }
+        
+                        // 페이지 추가
+                        var template = document.createElement('template');
+                        for (var i = 1; i <= parseInt(res.totalPage); i++) {
+                            template.innerHTML =
+                                '<li class="page-item"><a class="page-link" data-page="' + i +
+                                '" href="#">' + i +
+                                '</a></li>';
+                            pagination.insertBefore(template.content.firstChild, lastPage);
+                        }
+        
+                        lastPage.children[0].dataset.page = res.totalPage;
+        
+                        // 페이지 이벤트 등록
+                        var pageList = document.getElementsByClassName('page-item');
+                        for (var i = 0; i < pageList.length; i++) {
+                            pageList[i].addEventListener('click', selectPage, false);
+                        }
+                    },
+                    error: function (request, status, error) {
+                        res = JSON.parse(request.responseText);
+                        alert(res.message);
+                    }
+                    });
+                }
+        
+                function selectPage(e) {
+                    var sender = e.target;
+                    if (sender.dataset.page != null) {
+                    searchPage = parseInt(sender.dataset.page);
+                    searchCenter();
+                    }
+                }
+                </script>
+        </div>
+    </main>
+</body>

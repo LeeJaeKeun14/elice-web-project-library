@@ -35,12 +35,16 @@
 ### 프로젝트 필요 기능
 
 - 해야할 기능
-  - Book_rental 에 정규성 위배?
-  - 메인페이지 (별점이 없을경우 출력 방법)
-    - 고민 1 데이터를 강제 삽입
-  - 대여기능
   - 반납페이지기능
   - 책정보 상세페이지
+    - 제목이 길면 줄바꿈이 고장
+    - 상세 설명 디자인
+    - 채팅기능
+    - 로그인 세션 판단
+    - 별점기능
+  - 메인페이지 페이지네이션
+    - ajax를 사용한 페이지 내이션 기능 디자인이 너무 어렵다...
+      - a태그 링크를 활용해서 기능을 만들자.
 
 ***
 
@@ -171,6 +175,16 @@
   - 상세페이지 추가
     - 책 상세정보 출력
 
+***
+
+- 0.0.06
+  - 메인페이지 평점 정렬 책 출력
+    - 대여중인 책 권수 출력
+  - 대여기능
+    - 대여중일 경우 대여 불가
+    - 남은책이 없을 경우 불가
+  - Book_rental 에 정규성을 위해 컬럼 제거
+
 ## 에러 트러블 슈팅
 
 - 0.0.04
@@ -178,6 +192,8 @@
     - `During handling of the above exception, another exception occurred:`
     - `RuntimeError: No application found. Either work inside a view function or push an application context. See http://flask-sqlalchemy.pocoo.org/contexts/.`
       - flask-sqlalchemy 해결방법을 참고하여 해결
+
+***
 
 - 0.0.05
   - 플라스크 세션 에러
@@ -224,3 +240,17 @@
     - 정규표현식 `^(?=.*[a-zA-Z])(?=.*\d)[^ \t\n\r\f\v]{10,}` 으로 개수를 `len(user_pw)`로 따로 조건을 만들지만 중복 조건으로 8자 이상의 특수문자 모두 사용한 비밀번호가 10자 제한에 걸리는 오류
     - `flask Did you mean 'static' instead?`
       - 새로운 views 추가하면서 왜 연결이 되지 않을까 고민하다 그져 import를 하지 않았다는 간단한 문제를 한참이나 해결하지 못했다...
+
+***
+
+- 0.0.06
+  - sqlalchemy orm을 사용하여 join
+    - 처음 서비스를 시작할때, 모든 평점이 없어 오류발생
+    - 조인 방법을 사용하여 데이터 분석이 어려움
+    - pandas를 활용하여 데이터 핸들링
+    - 평점을 바로 merge 하는것이 아닌
+    - groupby를 활용하여 평균점 계산
+    - DataFram to json 오류
+      - `new_book = json.loads(new_book.to_json())` 속성을 주지 않아 이상하게 json으로 만들어서 df 형태로 반환
+        - `new_book = json.loads(new_book.to_json(orient="records"))` 
+
