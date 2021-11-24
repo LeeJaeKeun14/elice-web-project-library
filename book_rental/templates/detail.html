@@ -25,22 +25,77 @@
             justify-content: space-between;
             width: 90%;
             height: auto; 
-            margin: 10px 5%;
-            padding: 5px 0px;
+            margin: 20px 5%;
+            padding: 15px 0px;
 
             border: 1px solid #524fa1;
         }
         .img_box {
             display: inline-block;
-            margin-left: auto;
             width: 30%;
+            margin-left: 15px;
         }
         .con_box {
             display: inline-block;
             margin-right: auto;
-            width: 50%;
+            width: 65%;
+        }
+        .wrap {
+            width: 90%;
+            margin: 10px auto;
+        }
+
+        .title {
+            text-align: center;
+            color: aliceblue;
+        }
+        .mybox {
+            display: flex;
+            justify-content: space-between;
         }
     </style>
+    <script>
+        function postContent() {
+            evaluation_contente = $("#my-content").val()
+            user_id = {{ g.user.id }};
+
+            $.ajax({
+                url: 'book/detail/{{ data["detail_book"].book_id }}/contente',
+                type: 'post',
+                data: {
+                    'evaluation_contente': evaluation_contente,
+                    'user_id': user_id
+                },
+                success: function (res) {
+                    let result = res['result']
+                    if (result == "success") {
+                        window.location.reload()
+                    } else {
+                        alert("저장오류!")
+                    }
+                }
+            })
+        }
+
+        function postLike(id) {
+            $.ajax({
+                url: '/like',
+                type: 'patch',
+                data: {
+                        'id': id
+                },
+                success: function (res) {
+                        let result = res['result']
+                        if (result == "success") {
+                                window.location.reload()
+                        } else {
+                                alert("저장오류!")
+                        }
+                }
+            })
+        }
+
+    </script> 
 </head>
 <body>
     <header>
@@ -56,7 +111,7 @@
     <main>
         <div class="mb-2 row detail_box justify-content-center">
             <div class="img_box">
-                <div style="display: inline-block;">
+                <div>
                     <img class="img" src="{{ data['detail_book'].book_link }}" alt="{{ data['detail_book'].id }}.png">
                 </div>
             </div>
@@ -70,8 +125,8 @@
                     <p class="margin_b1">페이지 수</p>
                     <p class="margin_b1">ISBN 코드</p>
                 </div>  
-                <div style="display: inline-block; ">
-                    <p class="margin_b1">{{ b.book_name }}</p>
+                <div style="display: inline-block;  width: 380px;">
+                    <p style="word-wrap: break-word;" class="margin_b1">{{ b.book_name }}</p>
                     <p class="margin_b1">{{ b.book_publisher }}</p>
                     <p class="margin_b1">{{ b.book_author }}</p>
                     <p class="margin_b1">{{ b.book_publication_date }}</p>
@@ -85,10 +140,61 @@
                 </div>
             </div>
             <div>
-                <p>{{ b.book_description }}</p>
+                <div style="margin: 15px; margin-bottom: 5px; padding: 15px" class="border">
+                    <p>책 소개</p>
+                    <p>{{ b.book_description }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
+            
+        <div class="wrap">
+
+            <div class="mybox">
+                {% for b in data["evaluation_book"] %}
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">{{ b.user_id.user_nickname }}</label>
+                            <p>{{ b.evaluation_contente }}</p>
+                        </div>
+                        {{ b.evaluation_time }}
+                    </div>
+                    <div class="card-footer text-muted">
+                        <span style="color: #524fa1" class="margin_b0">{{' ★' * b.book_evaluation +' ☆' * (5 - b.book_evaluation) }}</span>
+                        <span style="font-size: 11px;" class="margin_b0">({{ b.book_evaluation }}점)</span>
+                    </div>
+                </div>
+                {% set cnt=loop.index %}
+                {% if cnt % 1 == 0 %}
+                    </div><div class="mybox">
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <h2 class="title">평가하기</h2>
+            <hr>
+            <div class="card">
+                <div style="display: flex;" class="card-header">
+                    <h4 style="margin-right: auto; margin-top: 5px;" class="display-7">댓글 작성</h4>
+                    <select style="width: 150px; height:100%; color: #524fa1" id="book_evaluation" class="form-select me-3" >
+                        <option value="5"> ★ ★ ★ ★ ★ </option>
+                        <option value="4"> ★ ★ ★ ★ ☆ </option>
+                        <option value="3"> ★ ★ ★ ☆ ☆ </option>
+                        <option value="2"> ★ ★ ☆ ☆ ☆ </option>
+                        <option value="1"> ★ ☆ ☆ ☆ ☆ </option>
+                    </select>   
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <textarea id='my-content' class="form-control" rows="3"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="postContent()">작성하기</button>
+                </div>
+            </div>
+            <hr>
+        </div>
+    
     </main>
 
 </body>

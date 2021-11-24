@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, session, flash, redirect, url_for
 from flask_bcrypt import Bcrypt
 from book_rental.src.model import User, Book, Book_stock, Book_rental, Book_evaluation
 from book_rental.create import db
+from math import ceil
 import json
 from . import api_index
 
@@ -31,6 +32,7 @@ def index():
     df_eval["book_evaluation"] = df_eval["book_evaluation"].astype("int")
     df_eval = df_eval[["book_id", "book_evaluation"]].groupby("book_id").mean()
     
+    print(df_eval)
     # 책 정보에 평가를 합치고, 값이 없을경우 0점 부여
     df = df.merge(df_eval, "left", left_on="id", right_on="book_id")
     df['book_evaluation'] = df['book_evaluation'].fillna(0)
@@ -54,3 +56,48 @@ def index():
         "rent_book_count": rent_book_count
     }
     return render_template('index.html', data=data)
+
+
+@api_index.route("/main/<page>", methods=('GET', 'POST'))
+def main(page):
+    
+    page = int(page)
+    books_count = db.session.query(Book).count()
+    
+    limit = 8
+    totalPage = ceil(books_count / 8)
+    if totalPage == 0:
+        page = 1
+        totalPage = 1
+    elif page >= totalPage:
+        page = totalPage
+    
+    # 책 DataFrame
+    queryset = Book.query.filter(Book.id > 0) 
+    df = pd.read_sql(queryset.statement, queryset.session.bind)  
+
+    # 책 평가 DataFrame
+    queryset = Book_evaluation.query.filter(Book_evaluation.id > 0)  
+    df_eval = pd.read_sql(queryset.statement, queryset.session.bind)
+    
+    # 책 평가 평균값 구하기
+    df_eval = df_eval[["book_id", "book_evaluation"]]
+    df_eval["book_evaluation"] = df_eval["book_evaluation"].astype("int")
+    df_eval = df_eval[["book_id", "book_evaluation"]].groupby("book_id").mean()
+    
+    print(df_eval)
+    # 책 정보에 평가를 합치고, 값이 없을경우 0점 부여
+    df = df.merge(df_eval, "left", left_on="id", right_on="book_id")
+    df['book_evaluation'] = df['book_evaluation'].fillna(0)
+    df['book_evaluation'] = df['book_evaluation'].astype("int")
+    
+    offset = (page - 1) * limit
+    books = df[offset:offset+limit]
+    books = json.loads(books.to_json(orient="records"))
+
+    data = {
+        "books": books,
+        "page": page,
+        "totalPage": totalPage
+    }
+    return render_template("main.html", data=data)

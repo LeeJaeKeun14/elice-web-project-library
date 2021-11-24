@@ -25,20 +25,20 @@
             justify-content: space-between;
             width: 90%;
             height: auto; 
-            margin: 10px 5%;
-            padding: 5px 0px;
+            margin: 20px 5%;
+            padding: 15px 0px;
 
             border: 1px solid #524fa1;
         }
         .img_box {
             display: inline-block;
-            margin-left: auto;
             width: 30%;
+            margin-left: 15px;
         }
         .con_box {
             display: inline-block;
             margin-right: auto;
-            width: 50%;
+            width: 65%;
         }
     </style>
 </head>
@@ -80,11 +80,11 @@
                     <p class="margin_b1">{{ b.book_isbn }}</p>
                     <p class="margin_b1">{{ data["stock_book_count"] }} 권</p>
                 </div>
-                <div style="margin-top: 20px;">
-                    <a style="text-decoration: none;" href="{{ url_for('book.rent', book_id=b.id) }}">
-                        <div style="background-color: #524fa1;" class="p-3 mb-1 rounded-3 text-center text-white">
-                            <h3 style="font-size: 20px;" class="fw-bold">대여</h2></div></a>
-                </div>
+                <form style="margin-top: 20px;" method="POST">
+                    <button type="submit" style="background-color: #524fa1; width: 100%;" class="p-3 mb-1 rounded-3 text-center text-white">
+                        <h3 style="font-size: 20px;" class="fw-bold">대여</h3>
+                    </button>
+                </form>
             </div>
             {% endfor %}
             

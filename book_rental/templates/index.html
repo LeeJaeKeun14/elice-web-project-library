@@ -85,8 +85,8 @@
                         <p style="font-weight: bold" class="margin_b0">{{ g.user.user_nickname }}님</p>
                         <p style="font-size: 12px; margin-bottom: 5px">{{ g.user.user_id }}</p>
                         <p class="margin_b0">
-                            <a style="text-decoration: none;" href="">대여기록</a>
-                            <a style="text-decoration: none;" href="{{ url_for('book.return_book') }}">반납하기</a>
+                            <a style="text-decoration: none;" href="{{ url_for('book.rental_list', page=1) }}">대여기록</a>
+                            <a style="text-decoration: none;" href="{{ url_for('book.return_book', page=1) }}">반납하기</a>
                         </p>
                         <p class="margin_b0">대여중인 책:{{ data["rent_book_count"] }}권</p>
                     </div>
@@ -99,6 +99,7 @@
         </div>
     </header>
     <main>
+        <div style="text-align: right; margin-right: 20px"><a href="{{ url_for('index.main', page=1) }}">모든 서적</a></div>
         <div>
             <div style="margin: 0px 5%; border-bottom: 2px solid #524fa1" class="mb-3 row justify-content-center">
                 추천도서
@@ -106,9 +107,10 @@
             <div style="background-color: #efeff6;" class="p-4 mb-3 row justify-content-center" >
                 {% for b in data["eval_book"] %}
                     <div class="book_box">
-                        <a style="text-decoration: none;" href="{{ url_for('book.detail', book_id=b.id) }}">
+                        <a style="text-decoration: none; color:black;" href="{{ url_for('book.detail', book_id=b.id) }}">
                             <img class="img border" src="{{ b.book_link }}" alt="{{ b.id }}.png">
-                            <p class="margin_b0">{{ b.book_evaluation }} 점</p>
+                            <span style="color: #524fa1" class="margin_b0">{{' ★' * b.book_evaluation +' ☆' * (5 - b.book_evaluation) }}</span>
+                            <span style="font-size: 11px;" class="margin_b0">({{ b.book_evaluation }}점)</span>
                             <p style="font-size: 12px;">
                                 {{ b.book_name[:10] }}
                                 {% if b.book_name[10:] %}
@@ -127,9 +129,10 @@
             <div style="background-color: #efeff6;" class="p-4 mb-3 row justify-content-center" >
                 {% for b in data["new_book"] %}
                     <div class="book_box">
-                        <a style="text-decoration: none;" href="{{ url_for('book.detail', book_id=b.id) }}">
+                        <a style="text-decoration: none; color:black;" href="{{ url_for('book.detail', book_id=b.id) }}">
                             <img class="img border" src="{{ b.book_link }}" alt="{{ b.id }}.png">
-                            <p class="margin_b0">{{ b.book_evaluation }} 점</p>
+                            <span style="color: #524fa1" class="margin_b0">{{' ★' * b.book_evaluation +' ☆' * (5 - b.book_evaluation) }}</span>
+                            <span style="font-size: 11px;" class="margin_b0">({{ b.book_evaluation }}점)</span>
                             <p style="font-size: 12px;">
                                 {{ b.book_name[:10] }}
                                 {% if b.book_name[10:] %}

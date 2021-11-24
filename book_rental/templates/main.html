@@ -22,7 +22,7 @@
         .book_box {
             display: inline-block;
             width: 160px;
-            height: 270px; 
+            height: 250px; 
             margin: 5px;
             padding-top: 7px;
             padding-bottom: 7px;
@@ -50,10 +50,10 @@
             <table class="table table-hover table-bordered">
                 
                 <div style="background-color: #efeff6;" class="p-4 row justify-content-center" >
-                    {% for b in data["return_books"][:4] %}
+                    {% for b in data["books"][:4] %}
                     <div class="book_box">
-                        <a style="text-decoration: none; color:black;" href="{{ url_for('book.detail', book_id=b.book_id) }}">
-                            <img class="img border" src="{{ b.book_link }}" alt="{{ b.book_id }}.png">
+                        <a style="text-decoration: none; color:black;" href="{{ url_for('book.detail', book_id=b.id) }}">
+                            <img class="img border" src="{{ b.book_link }}" alt="{{ b.id }}.png">
                             <span style="color: #524fa1" class="margin_b0">{{' ★' * b.book_evaluation +' ☆' * (5 - b.book_evaluation) }}</span>
                             <span style="font-size: 11px;" class="margin_b0">({{ b.book_evaluation }}점)</span>
                             <p class="margin_b0"     style="font-size: 12px;">
@@ -62,24 +62,19 @@
                                 ...
                                 {% endif %}
                             </p>
-                            <p style="font-size: 16px;">{{ b.rental_date[:10] }}</p>
                         </a>
-                        <form method="POST">
-                            <input type="hidden" name="book_serial_number" value={{ b.book_serial_number }}>    
-                            <button style="background-color: #524fa1; width: 134px;" type="font-size: 20px;" class="rounded-3 text-center text-white">반납!</button>
-                        </form>
                     </div>
-                    {% endfor %}
-                    {% for i in range(4 - data["return_books"][:4]|length)%}
+                    {% endfor %}    
+                    {% for i in range(4 - data["books"][:4]|length)%}
                     <div class="book_box">
                     </div>  
                     {% endfor %}
                 </div>
                 <div style="background-color: #efeff6;" class="p-5 row justify-content-center" >
-                    {% for b in data["return_books"][4:8] %}
+                    {% for b in data["books"][4:8] %}
                     <div class="book_box">
-                        <a style="text-decoration: none; color:black;" href="{{ url_for('book.detail', book_id=b.book_id) }}">
-                            <img class="img border" src="{{ b.book_link }}" alt="{{ b.book_id }}.png">
+                        <a style="text-decoration: none; color:black;" href="{{ url_for('book.detail', book_id=b.id) }}">
+                            <img class="img border" src="{{ b.book_link }}" alt="{{ b.id }}.png">
                             <span style="color: #524fa1" class="margin_b0">{{' ★' * b.book_evaluation +' ☆' * (5 - b.book_evaluation) }}</span>
                             <span style="font-size: 11px;" class="margin_b0">({{ b.book_evaluation }}점)</span>
                             <p class="margin_b0" style="font-size: 12px;">
@@ -88,18 +83,10 @@
                                 ...
                                 {% endif %}
                             </p>
-                            <p style="font-size: 16px;">{{ b.rental_date[:10] }}</p>
                         </a>
-                        <form method="POST">
-                            <input type="hidden" name="book_serial_number" value={{ b.book_serial_number }}>
-                            <div style="background-color: #524fa1;" class="p-3 mb-1 rounded-3 text-center text-white">
-                                <button type="submit">반납!</button>
-                                <h3 style="font-size: 20px;" class="fw-bold">책 대여하기</h2></div></a>
-                            
-                        </form>
                     </div>
                     {% endfor %}
-                    {% for i in range(4 - data["return_books"][4:8]|length)%}
+                    {% for i in range(4 - data["books"][4:8]|length)%}
                     <div class="book_box">
                     </div>
                     {% endfor %}
@@ -115,7 +102,7 @@
                         </a>
                     </li>
                     {% for i in range(1, data["totalPage"] + 1) %}
-                    <li class="page-item"><a class="page-link" data-page="{{ i }}" href="{{ url_for('book.return_book', page=i) }}">{{ i }}</a></li>
+                    <li class="page-item"><a class="page-link" data-page="{{ i }}" href="{{ url_for('index.main', page=i) }}">{{ i }}</a></li>
                     {% endfor %}
                     <li class="page-item" id="last-page">
                         <a class="page-link" href="#" aria-label="Next">
