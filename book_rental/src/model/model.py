@@ -93,7 +93,7 @@ class Book_evaluation(db.Model):
     evaluation_contente = db.Column(db.Text(), nullable = False)
     evaluation_time = db.Column(db.DateTime, default=datetime.utcnow() + timedelta(hours=9))
     evaluation_delete = db.Column(db.Boolean, default=True)
-
+    evaluation_contente
     def __init__(self,book_id,user_id,book_evaluation,evaluation_contente):
         self.book_id = book_id
         self.user_id = user_id
