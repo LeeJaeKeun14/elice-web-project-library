@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser(description='서버 실행 환경 선택')
 parser.add_argument('--env', required=False, default='dev', help='dev, prod, test 가 있습니다.')
 
 args = parser.parse_args()
-app = create_app(args.env)
 
 if __name__ == '__main__':
-    app.run()
+    app = create_app(args.env)
+    app.run(host='0.0.0.0', port=80)
