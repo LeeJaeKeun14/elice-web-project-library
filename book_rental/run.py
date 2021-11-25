@@ -9,5 +9,5 @@ parser.add_argument('--env', required=False, default='dev', help='dev, prod, tes
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    app = create_app(args.env)
+    app = create_app()
     app.run(host='0.0.0.0', port=80)
