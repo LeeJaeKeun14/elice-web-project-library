@@ -91,11 +91,8 @@
                             <p style="font-size: 16px;">{{ b.rental_date[:10] }}</p>
                         </a>
                         <form method="POST">
-                            <input type="hidden" name="book_serial_number" value={{ b.book_serial_number }}>
-                            <div style="background-color: #524fa1;" class="p-3 mb-1 rounded-3 text-center text-white">
-                                <button type="submit">반납!</button>
-                                <h3 style="font-size: 20px;" class="fw-bold">책 대여하기</h2></div></a>
-                            
+                            <input type="hidden" name="book_serial_number" value={{ b.book_serial_number }}>    
+                            <button style="background-color: #524fa1; width: 134px;" type="font-size: 20px;" class="rounded-3 text-center text-white">반납!</button>
                         </form>
                     </div>
                     {% endfor %}

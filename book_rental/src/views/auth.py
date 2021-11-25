@@ -15,13 +15,7 @@ def load_logged_in_user():
     else:
         g.user = db.session.query(User).filter(User.id == id).first()
 
-# 중복확인 버튼 고민 흔적
-# @api_auth.route('/duplicate_id', methods=('GET', 'POST'))
-# def duplicate_id():
-#     print("중복확인")
-#     flash(message={"중복확인"}, category="danger")
-#     return jsonify({"result":"중복확인"})
-
+# 회원가입
 @api_auth.route('/signup', methods=('GET', 'POST'))
 def signup():
     if session.get('user_id') is None: # 로그인 여부 확인
@@ -84,7 +78,7 @@ def signup():
     # 로그인 시 메인화면으로 이동
     return redirect(url_for('index.index'))
 
-
+# 로그인
 @api_auth.route('/signin', methods=('GET', 'POST'))
 def signin():
     if session.get('user_id') is None:
@@ -95,8 +89,6 @@ def signin():
             user = db.session.query(User).filter(User.user_id == user_id).first()
             message, messageType = None, None
 
-            print(user_id)
-            print(user.id)
             if user is None:
                 message, messageType = '등록되지 않은 계정입니다.', 'danger'
             elif not bcrypt.check_password_hash(user.user_pw, user_pw):
@@ -122,8 +114,6 @@ def book_signin(book_id, method):
             user = db.session.query(User).filter(User.user_id == user_id).first()
             message, messageType = None, None
 
-            print(user_id)
-            print(user.id)
             if user is None:
                 message, messageType = '등록되지 않은 계정입니다.', 'danger'
             elif not bcrypt.check_password_hash(user.user_pw, user_pw):

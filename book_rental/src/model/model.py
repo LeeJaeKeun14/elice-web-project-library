@@ -1,5 +1,6 @@
 from book_rental.create import db
 from datetime import datetime
+from datetime import timedelta
 
 # 유저 정보
 class User(db.Model):
@@ -26,8 +27,8 @@ class Book(db.Model):
     __tablename__ = 'book'
     id = db.Column(db.Integer,  primary_key=True, autoincrement=True)
     book_name = db.Column(db.String(100), nullable=False)
-    book_publisher = db.Column(db.String(40), nullable=False)
-    book_author = db.Column(db.String(30), nullable=False)
+    book_publisher = db.Column(db.String(100), nullable=False)
+    book_author = db.Column(db.String(100), nullable=False)
     book_publication_date = db.Column(db.DateTime, nullable=False)
     book_pages = db.Column(db.Integer, nullable=False)
     book_isbn = db.Column(db.BigInteger, nullable=False)
@@ -54,7 +55,7 @@ class Book(db.Model):
 class Book_stock(db.Model):
     __tablename__ = 'book_stock'
     book_serial_number = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    book_id = db.Column(db.String(100), db.ForeignKey("book.id"), nullable = False)
+    book_id = db.Column(db.Integer, db.ForeignKey("book.id"), nullable = False)
     is_rental = db.Column(db.Boolean, nullable = False)
 
     # 대여_책 외부키
@@ -72,7 +73,7 @@ class Book_rental(db.Model):
                             nullable = False)
     book_serial_number = db.Column(db.Integer, db.ForeignKey("book_stock.book_serial_number"), 
                             nullable = False)
-    rental_date = db.Column(db.DateTime, default=datetime.utcnow)
+    rental_date = db.Column(db.DateTime, default=datetime.utcnow() + timedelta(hours=9))
     return_date = db.Column(db.DateTime)
     is_return = db.Column(db.Boolean, nullable = False)
     
@@ -90,7 +91,8 @@ class Book_evaluation(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable = False)
     book_evaluation = db.Column(db.Integer, nullable = False)
     evaluation_contente = db.Column(db.Text(), nullable = False)
-    evaluation_time = db.Column(db.DateTime, default=datetime.utcnow)
+    evaluation_time = db.Column(db.DateTime, default=datetime.utcnow() + timedelta(hours=9))
+    evaluation_delete = db.Column(db.Boolean, default=True)
 
     def __init__(self,book_id,user_id,book_evaluation,evaluation_contente):
         self.book_id = book_id

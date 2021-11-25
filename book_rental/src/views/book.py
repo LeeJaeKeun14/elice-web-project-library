@@ -6,6 +6,7 @@ from math import ceil
 import pandas as pd
 import json
 from datetime import datetime
+from datetime import timedelta
 from . import api_book
 
 @api_book.before_app_request
@@ -34,9 +35,13 @@ def rental(book_id):
             message, messageType = '대여할 수 있는 책이 없습니다.', 'danger'
 
         book_stock = db.session.query(Book_stock).\
-                            filter(Book_stock.book_id == book_id).first()
+                            filter(Book_stock.book_id == book_id).all()
+        book_serial_numbers = []
+        for b in book_stock:
+            book_serial_numbers.append(b.book_serial_number)
+        print(g.user.id)
         rent_user = db.session.query(Book_rental).\
-                            filter(Book_rental.book_serial_number == book_stock.book_serial_number).\
+                            filter(Book_rental.book_serial_number.in_(book_serial_numbers)).\
                             filter(Book_rental.user_id == g.user.id).\
                             filter(Book_rental.is_return == 0).first()
         # 이미 대여중일 경우 대여할 수 없습니다.
@@ -70,36 +75,23 @@ def rental(book_id):
 @api_book.route('/detail/<book_id>')
 def detail(book_id):
     
-    evaluation_book = db.session.query(Book_evaluation).\
-                                filter(Book_evaluation.book_id == book_id).all()
-    # queryset = Book_stock.query.filter(Book_stock.book_serial_number > 0)
-    # df_stock = pd.read_sql(queryset.statement, queryset.session.bind) 
-    # df_stock = df_stock[["book_serial_number", "book_id"]]
-    # df = df.merge(df_stock, "left", on="book_serial_number")
+    # evaluation_book = db.session.query(Book_evaluation).\
+    #                             filter(Book_evaluation.book_id == book_id).all()
     
-    # queryset = Book.query.filter(Book.id > 0) 
-    # df_book = pd.read_sql(queryset.statement, queryset.session.bind)  
-
-    # queryset = Book_evaluation.query.filter(Book_evaluation.id > 0)  
-    # df_eval = pd.read_sql(queryset.statement, queryset.session.bind)
     
-    # # 책 평가 평균값 구하기
-    # df_eval = df_eval[["book_id", "book_evaluation"]]
-    # df_eval["book_evaluation"] = df_eval["book_evaluation"].astype("int")
-    # df_eval = df_eval[["book_id", "book_evaluation"]].groupby("book_id").mean()
+    queryset = Book_evaluation.query.filter(Book_evaluation.book_id == book_id).\
+                                    filter(Book_evaluation.evaluation_delete == 1)
+    df = pd.read_sql(queryset.statement, queryset.session.bind) 
     
-    # # 책 정보에 평가를 합치고, 값이 없을경우 0점 부여
-    # df_book = df_book.merge(df_eval, "left", left_on="id", right_on="book_id")
-    # df_book['book_evaluation'] = df_book['book_evaluation'].fillna(0)
-    # df_book['book_evaluation'] = df_book['book_evaluation'].astype("int")
-    # # 책 내용 책 평가 책 대여 기록
+    queryset = User.query.filter(User.id > 0) 
+    df_user = pd.read_sql(queryset.statement, queryset.session.bind)
+    df_user = df_user[["id", "user_nickname"]] 
     
-    # df = df.merge(df_book, "left", left_on="book_id" ,right_on="id")
-    # df.rental_date = df.rental_date.astype("str")
+    df = df.merge(df_user, "left", left_on="user_id", right_on="id")
     
-    # offset = (page - 1) * limit
-    # return_books = df[offset:offset+limit]
-    # return_books = json.loads(return_books.to_json(orient="records"))
+    df.evaluation_time = df.evaluation_time.astype("str")
+    evaluation_book = df[::-1]
+    evaluation_book = json.loads(evaluation_book.to_json(orient="records"))
     
     
     
@@ -112,15 +104,70 @@ def detail(book_id):
     }
     return render_template("detail.html", data=data)
 
-@api_book.route('/detail/<book_id>/contente', methods=('GET', 'POST'))
-def contente(book_id):
+# 댓글 api
+@api_book.route('/detail/contente', methods=('GET', 'POST'))
+def contente():
     # 댓글 기능
-    user_id = g.user.user_id
+    book_id = int(request.form['book_id'])
+    user_id = g.user.id
+    book_evaluation = int(request.form['book_evaluation'])
+    evaluation_contente = request.form['evaluation_contente']
     
-    return redirect(url_for('book.detail', book_id=book_id))
+    
+    # 도서 대여 여부 확인
+    # 반납 대여 하지 않음(경고, 책을 대여해야 합니다)
+    book_stock = db.session.query(Book_stock).\
+                        filter(Book_stock.book_id == book_id).all()
+    book_serial_numbers = []
+    for b in book_stock:
+        book_serial_numbers.append(b.book_serial_number)
+
+    if db.session.query(Book_rental).\
+                filter(Book_rental.book_serial_number.in_(book_serial_numbers)).\
+                filter(Book_rental.user_id == g.user.id).\
+                filter(Book_rental.is_return == 0).first() == None:
+        return jsonify({'result':'no_rental'}) 
+    
+    evaluation_user = db.session.query(Book_evaluation).\
+                                filter(Book_evaluation.user_id == user_id).\
+                                filter(Book_evaluation.book_id == book_id).\
+                                filter(Book_evaluation.evaluation_delete == 1).all()
+    
+    # 댓글 기록이 있으면
+    if evaluation_user:
+        # 가장 마지막 댓글 시간
+        eval_time = str(evaluation_user[-1].evaluation_time)
+        time = str(datetime.utcnow() + timedelta(hours=9))
+        if eval_time[:10] == time[:10]:
+            return jsonify({'result':'today'}) 
+    # 이미 평가 하였음
+    # 하루 1번만 평가할 수 있습니다.
+    
+    #DB write
+    evaluation_book = Book_evaluation(book_id, user_id, book_evaluation, evaluation_contente)
+    db.session.add(evaluation_book)
+    db.session.commit()
+    return jsonify({'result':'success'})
+    # return redirect(url_for('book.detail', book_id=book_id))
 
 
+# 댓글 삭제 api
+@api_book.route('/detail/delete_contente', methods=('GET', 'POST'))
+def delete_contente():
+    # 댓글 찾기
+    id = int(request.form['id'])
     
+    evaluation_book = db.session.query(Book_evaluation).\
+                                filter(Book_evaluation.id == id).first()
+    print(evaluation_book)
+    evaluation_book.evaluation_delete = 0
+    
+    db.session.add(evaluation_book)
+    db.session.commit()
+    return jsonify({'result':'success'})
+    # return redirect(url_for('book.detail', book_id=book_id))
+
+# 책 반납 페이지
 @api_book.route('/return_book/<page>', methods=('GET', 'POST'))
 def return_book(page):
     
@@ -136,7 +183,7 @@ def return_book(page):
                                 filter(Book_rental.user_id == g.user.id).\
                                 filter(Book_rental.is_return == 0).first()
         rental_book.is_return = 1
-        rental_book.return_date = datetime.utcnow()
+        rental_book.return_date = datetime.utcnow() + timedelta(hours=9)
         
         db.session.add(rental_book)
         
@@ -180,7 +227,7 @@ def return_book(page):
     queryset = Book.query.filter(Book.id > 0) 
     df_book = pd.read_sql(queryset.statement, queryset.session.bind)  
 
-    queryset = Book_evaluation.query.filter(Book_evaluation.id > 0)  
+    queryset = Book_evaluation.query.filter(Book_evaluation.evaluation_delete == 1)  
     df_eval = pd.read_sql(queryset.statement, queryset.session.bind)
     
     # 책 평가 평균값 구하기
@@ -211,6 +258,7 @@ def return_book(page):
     }
     return render_template("return_book.html", data=data)
 
+# 책 대여 페이지
 @api_book.route('/rental_list/<page>')
 def rental_list(page):
     
@@ -248,7 +296,7 @@ def rental_list(page):
     queryset = Book.query.filter(Book.id > 0) 
     df_book = pd.read_sql(queryset.statement, queryset.session.bind)  
 
-    queryset = Book_evaluation.query.filter(Book_evaluation.id > 0)  
+    queryset = Book_evaluation.query.filter(Book_evaluation.evaluation_delete == 1)  
     df_eval = pd.read_sql(queryset.statement, queryset.session.bind)
     
     # 책 평가 평균값 구하기

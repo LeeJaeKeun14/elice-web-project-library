@@ -24,7 +24,7 @@ def index():
     df = pd.read_sql(queryset.statement, queryset.session.bind)  
 
     # 책 평가 DataFrame
-    queryset = Book_evaluation.query.filter(Book_evaluation.id > 0)  
+    queryset = Book_evaluation.query.filter(Book_evaluation.evaluation_delete == 1)  
     df_eval = pd.read_sql(queryset.statement, queryset.session.bind)
     
     # 책 평가 평균값 구하기
@@ -32,7 +32,6 @@ def index():
     df_eval["book_evaluation"] = df_eval["book_evaluation"].astype("int")
     df_eval = df_eval[["book_id", "book_evaluation"]].groupby("book_id").mean()
     
-    print(df_eval)
     # 책 정보에 평가를 합치고, 값이 없을경우 0점 부여
     df = df.merge(df_eval, "left", left_on="id", right_on="book_id")
     df['book_evaluation'] = df['book_evaluation'].fillna(0)
@@ -77,7 +76,7 @@ def main(page):
     df = pd.read_sql(queryset.statement, queryset.session.bind)  
 
     # 책 평가 DataFrame
-    queryset = Book_evaluation.query.filter(Book_evaluation.id > 0)  
+    queryset = Book_evaluation.query.filter(Book_evaluation.evaluation_delete == 1)  
     df_eval = pd.read_sql(queryset.statement, queryset.session.bind)
     
     # 책 평가 평균값 구하기
@@ -85,7 +84,6 @@ def main(page):
     df_eval["book_evaluation"] = df_eval["book_evaluation"].astype("int")
     df_eval = df_eval[["book_id", "book_evaluation"]].groupby("book_id").mean()
     
-    print(df_eval)
     # 책 정보에 평가를 합치고, 값이 없을경우 0점 부여
     df = df.merge(df_eval, "left", left_on="id", right_on="book_id")
     df['book_evaluation'] = df['book_evaluation'].fillna(0)

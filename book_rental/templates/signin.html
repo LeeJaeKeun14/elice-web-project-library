@@ -37,8 +37,8 @@
       
       {% if method == "rental" %}
       <h1 style="margin-left: 20px;">대여하기</h1>
-      {% else %}
-      <h1 style="margin-left: 20px;">평가하기</h1>
+      {% elif method == "contente" %}
+      <h1 style="margin-left: 20px;">댓글 작성하기</h1>
       {% endif %}
       <div class="container-fluid">
         {% with messages = get_flashed_messages(with_categories=true) %}
