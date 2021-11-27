@@ -107,6 +107,7 @@
                 success: function (res) {
                     let result = res['result']
                     if (result == "success") {
+                        alert("댓글을 성공적으로 삭제하였습니다.")
                         window.location.reload()
                     } else {
                         alert("삭제오류!")

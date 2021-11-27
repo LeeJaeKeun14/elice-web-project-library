@@ -52,7 +52,7 @@ def rental(book_id):
             stock_book.is_rental = 1
             db.session.add(stock_book)
             
-            rent_book = Book_rental(g.user.id, stock_book.book_serial_number, None, 0)
+            rent_book = Book_rental(g.user.id, stock_book.book_serial_number, datetime.utcnow() + timedelta(hours=9), None, 0)
             db.session.add(rent_book)
             db.session.commit()
             return redirect(url_for('index.index'))
@@ -124,8 +124,7 @@ def contente():
 
     if db.session.query(Book_rental).\
                 filter(Book_rental.book_serial_number.in_(book_serial_numbers)).\
-                filter(Book_rental.user_id == g.user.id).\
-                filter(Book_rental.is_return == 0).first() == None:
+                filter(Book_rental.user_id == g.user.id).first() == None:
         return jsonify({'result':'no_rental'}) 
     
     evaluation_user = db.session.query(Book_evaluation).\
@@ -144,7 +143,7 @@ def contente():
     # 하루 1번만 평가할 수 있습니다.
     
     #DB write
-    evaluation_book = Book_evaluation(book_id, user_id, book_evaluation, evaluation_contente)
+    evaluation_book = Book_evaluation(book_id, user_id, book_evaluation, datetime.utcnow() + timedelta(hours=9),  evaluation_contente)
     db.session.add(evaluation_book)
     db.session.commit()
     return jsonify({'result':'success'})

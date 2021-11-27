@@ -77,9 +77,10 @@ class Book_rental(db.Model):
     return_date = db.Column(db.DateTime)
     is_return = db.Column(db.Boolean, nullable = False)
     
-    def __init__(self,user_id,book_serial_number,return_date,is_return):
+    def __init__(self,user_id,book_serial_number,rental_date,return_date,is_return):
         self.user_id = user_id
         self.book_serial_number = book_serial_number
+        self.rental_date = rental_date
         self.return_date = return_date
         self.is_return = is_return
 
@@ -94,8 +95,9 @@ class Book_evaluation(db.Model):
     evaluation_time = db.Column(db.DateTime, default=datetime.utcnow() + timedelta(hours=9))
     evaluation_delete = db.Column(db.Boolean, default=True)
     evaluation_contente
-    def __init__(self,book_id,user_id,book_evaluation,evaluation_contente):
+    def __init__(self,book_id,user_id,book_evaluation,evaluation_time,evaluation_contente):
         self.book_id = book_id
         self.user_id = user_id
         self.book_evaluation = book_evaluation
+        self.evaluation_time = evaluation_time
         self.evaluation_contente = evaluation_contente
