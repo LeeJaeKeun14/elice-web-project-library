@@ -75,10 +75,6 @@ def rental(book_id):
 @api_book.route('/detail/<book_id>')
 def detail(book_id):
     
-    # evaluation_book = db.session.query(Book_evaluation).\
-    #                             filter(Book_evaluation.book_id == book_id).all()
-    
-    
     queryset = Book_evaluation.query.filter(Book_evaluation.book_id == book_id).\
                                     filter(Book_evaluation.evaluation_delete == 1)
     df = pd.read_sql(queryset.statement, queryset.session.bind) 
@@ -92,9 +88,6 @@ def detail(book_id):
     df.evaluation_time = df.evaluation_time.astype("str")
     evaluation_book = df[::-1]
     evaluation_book = json.loads(evaluation_book.to_json(orient="records"))
-    
-    
-    
     
     detail_book = db.session.query(Book).filter(Book.id == book_id).first()
     
@@ -112,7 +105,6 @@ def contente():
     user_id = g.user.id
     book_evaluation = int(request.form['book_evaluation'])
     evaluation_contente = request.form['evaluation_contente']
-    
     
     # 도서 대여 여부 확인
     # 반납 대여 하지 않음(경고, 책을 대여해야 합니다)
@@ -201,7 +193,6 @@ def return_book(page):
                             filter(Book_rental.user_id == g.user.id).\
                             filter(Book_rental.is_return == 0).count()
     # db 접근
-    
     limit = 8
     totalPage = ceil(return_books_count / 8)
     if totalPage == 0:
@@ -237,6 +228,7 @@ def return_book(page):
     # 책 정보에 평가를 합치고, 값이 없을경우 0점 부여
     df_book = df_book.merge(df_eval, "left", left_on="id", right_on="book_id")
     df_book['book_evaluation'] = df_book['book_evaluation'].fillna(0)
+    df_book['book_evaluation'] = df_book['book_evaluation'].apply(lambda x : round(x))
     df_book['book_evaluation'] = df_book['book_evaluation'].astype("int")
     # 책 내용 책 평가 책 대여 기록
     
@@ -306,6 +298,7 @@ def rental_list(page):
     # 책 정보에 평가를 합치고, 값이 없을경우 0점 부여
     df_book = df_book.merge(df_eval, "left", left_on="id", right_on="book_id")
     df_book['book_evaluation'] = df_book['book_evaluation'].fillna(0)
+    df_book['book_evaluation'] = df_book['book_evaluation'].apply(lambda x : round(x))
     df_book['book_evaluation'] = df_book['book_evaluation'].astype("int")
     # 책 내용 책 평가 책 대여 기록
     
