@@ -107,7 +107,6 @@
 [선택] *대여기록*
 
 - [x]  로그인한 유저가 대여 후 반납했던 책에 대한 모든 사항을 출력합니다.
-
 - [x] 배포
 
 ***
@@ -116,10 +115,9 @@
 
 - [x] 로그인 하지 않아도 사이트 접근 가능
 - [x] 일반 로그인, 대여를 위한 로그인, 댓글을 위한 로그인 구분
-- [x] 평점순, 신간도서 순 5개 정렬
 - [x] 책을 대여해야만 댓글 작성 가능
 - [x] 평점 조작을 막기 위해 하루 1번만 댓글 가능
-- [x] 서울은 그리니치천문대 기준 9시간 느리다.
+- [x] 서울 기준 시간
 - [x] 댓글 삭제 추가(데이터 베이스 삭제가 아닌 노출만 제거)
 - [x] 메인페이지 정렬기능
 
@@ -137,22 +135,56 @@
 ### 파이썬 패키지 버전
 
 > python.3.8\
-> certifi            2021.10.8\
-> charset-normalizer 2.0.7\
-> click              8.0.3\
-> colorama           0.4.4\
-> Flask              2.0.2\
-> Flask-SQLAlchemy   2.5.1\
-> greenlet           1.1.2\
-> idna               3.3\
-> itsdangerous       2.0.1\
-> Jinja2             3.0.3\
-> MarkupSafe         2.0.1\
-> pip                19.2.3\
-> requests           2.26.0\
-> setuptools         41.2.0\
-> SQLAlchemy         1.4.27\
-> urllib3            1.26.7\
+> atomicwrites       1.4.0
+> attrs              21.2.0
+> backcall           0.2.0
+> bcrypt             3.2.0
+> certifi            2021.10.8
+> cffi               1.15.0
+> charset-normalizer 2.0.7
+> click              8.0.3
+> colorama           0.4.4
+> cryptography       36.0.0
+> decorator          5.1.0
+> et-xmlfile         1.1.0
+> Flask              2.0.2
+> Flask-Bcrypt       0.7.1
+> Flask-SQLAlchemy   2.5.1
+> greenlet           1.1.2
+> idna               3.3
+> iniconfig          1.1.1
+> ipdb               0.13.9
+> ipython            7.29.0
+> itsdangerous       2.0.1
+> jedi               0.18.1
+> Jinja2             3.0.3
+> MarkupSafe         2.0.1
+> matplotlib-inline  0.1.3
+> numpy              1.21.4
+> openpyxl           3.0.9
+> packaging          21.3
+> pandas             1.3.4
+> parso              0.8.2
+> pickleshare        0.7.5
+> pip                21.3.1
+> pluggy             1.0.0
+> prompt-toolkit     3.0.22
+> py                 1.11.0
+> pycparser          2.21
+> Pygments           2.10.0
+> PyMySQL            1.0.2
+> pyparsing          3.0.6
+> pytest             6.2.5
+> python-dateutil    2.8.2
+> pytz               2021.3
+> requests           2.26.0
+> setuptools         41.2.0
+> six                1.16.0
+> SQLAlchemy         1.4.27
+> toml               0.10.2
+> traitlets          5.1.1
+> urllib3            1.26.7
+> wcwidth            0.2.5
 > Werkzeug           2.0.2
 
 ***
@@ -173,6 +205,7 @@
 
 - 팀장 : 이재근
   - DB 관리 : 이재근
+  - flask 관리 : 이재근
   - 로그인 세션 관리 : 이재근
   - 프론트앤드 관리 : 이재근
   - 데이터 관리 : 이재근

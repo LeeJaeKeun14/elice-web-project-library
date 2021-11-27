@@ -24,5 +24,5 @@ def create_app(test_config='dev'):
     return app
 
 if __name__ == '__main__':
-    app = create_app()
+    app = create_app("prod")
     app.run(host='0.0.0.0', port=80)
