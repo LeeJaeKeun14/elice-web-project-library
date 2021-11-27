@@ -7,6 +7,7 @@
     
     <!-- Bootstrap CSS -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/static/js/jquery-3.6.0.min.js"></script>
     
     <title>도서관 대출 서비스</title>
     <style>
@@ -16,8 +17,8 @@
             display: block;
             margin: 0px auto;
         }
-        .margin_b0 {
-            margin-bottom: 0px;
+        .margin_b1 {
+            margin-bottom: 5px;
         }
         .book_box {
             display: inline-block;
@@ -46,6 +47,145 @@
     <main>
         
         <div class="container-fluid">
+            <details>
+                <summary>정렬하기!</summary>
+                <div style="text-align: right;" class="tpt"> 
+                    <form method="POST">
+                        <div style="text-align: left;">
+                            <input style="text-align: center; margin-left: 5px; background:#fdc7d7; color:#524fa1; border:solid 1px #fdc7d7; border-radius:5px; width: 100px;" type="hidden" name="num_1" readonly>
+                            <input style="text-align: center; margin-left: 5px; background:#ff9de6; color:#524fa1; border:solid 1px #fdc7d7; border-radius:5px; width: 100px;" type="hidden" name="num_2" readonly>
+                            <input style="text-align: center; margin-left: 5px; background:#a5d8f3; color:#524fa1; border:solid 1px #fdc7d7; border-radius:5px; width: 100px;" type="hidden" name="num_3" readonly>
+                        </div>
+                        <p class="margin_b1">이름 
+                            <input type="radio" id="evaluation_descending" name="name_sort" value="높은순">
+                            <label for="높은순">높은순</label>
+                            <input type="radio" id="evaluation_ascending" name="name_sort" value="낮은순">
+                            <label for="낮은순">낮은순</label>
+                            <button style="font-size: 9px; float: right; background-color: #524fa1; margin-left: 10px" class="btn btn-primary" onclick="deselect1(event)">해제</button>
+                        </p>
+                        <p class="margin_b1">평점
+                            <input type="radio" id="evaluation_descending" name="evaluation_sort" value="높은순">
+                            <label for="높은순">높은순</label>
+                            <input type="radio" id="evaluation_ascending" name="evaluation_sort" value="낮은순">
+                            <label for="낮은순">낮은순</label>
+                            <button style="font-size: 9px; float: right; background-color: #524fa1; margin-left: 10px" class="btn btn-primary" onclick="deselect2(event)">해제</button>
+                        </p>
+                        <p>시간
+                            <input type="radio" id="time_descending" name="time_sort" value="빠른순">
+                            <label for="빠른순">빠른순</label>
+                            <input type="radio" id="time_ascending" name="time_sort" value="느린순">
+                            <label for="느린순">느린순</label>
+                            <button style="font-size: 9px; float: right; background-color: #524fa1; margin-left: 10px" class="btn btn-primary" onclick="deselect3(event)">해제</button>
+                        </p>
+                        <div>
+                            <button style="font-size: 12px;background-color: #524fa1;" type="submit" class="btn btn-primary" >정렬하기</button>
+                        </div>
+                    </form>
+                </div>  
+            </details>
+            <script>
+                function deselect1(e) {
+                    e.preventDefault(); 
+                    $("input[name='name_sort']").prop('checked', false);
+                    $("input[name=num_" + name_sort + "]").val("");
+                    num_reset(name_sort)
+                    name_sort = 5
+                }
+                function deselect2(e) {
+                    e.preventDefault(); 
+                    $("input[name='evaluation_sort']").prop('checked', false);
+                    $("input[name=num_" + evaluation_sort + "]").val("");
+                    num_reset(evaluation_sort)
+                    evaluation_sort = 5
+                }
+                function deselect3(e) {
+                    e.preventDefault(); 
+                    $("input[name='time_sort']").prop('checked', false);
+                    $("input[name=num_" + time_sort + "]").val("");
+                    num_reset(time_sort)
+                    time_sort = 5
+                }
+
+                function num_reset(num) {
+                    var name_value = $("input[name=num_" + name_sort + "]").val()
+                    var evaluatiohn_value = $("input[name=num_" + evaluation_sort + "]").val()
+                    var time_value = $("input[name=num_" + time_sort + "]").val()
+                    if (name_sort != 5 && name_sort > num) {
+                        name_sort -= 1
+                        $("input[name=num_" + name_sort + "]").val(name_value);
+                    }
+                    if (evaluation_sort != 5 && evaluation_sort > num) {
+                        evaluation_sort -= 1
+                        $("input[name=num_" + evaluation_sort + "]").val(evaluatiohn_value);
+                    }
+                    if (time_sort != 5 && time_sort > num) {
+                        time_sort -= 1
+                        $("input[name=num_" + time_sort + "]").val(time_value);
+                    }
+                    if (num != 5) {
+                        last_num -= 1
+                    }
+                    $("input[name=num_" + last_num + "]").val("");
+                    $("input[name=num_" + last_num + "]").prop("type", "hidden");   
+                }
+
+                // 라디오버튼 클릭시 이벤트 발생
+                var name_sort = 5
+                var evaluation_sort = 5
+                var time_sort = 5
+
+                var last_num = 1
+                $("input:radio[name=name_sort]").click(function(){
+                    if (name_sort == 5){
+                        name_sort = last_num
+                        last_num += 1
+                        $("input[name=num_" + name_sort + "]").prop("type", "text");
+                    }
+                    if($("input[name=name_sort]:checked").val() == "높은순"){
+                        $("input[name=num_" + name_sort + "]").val("이름:높은순");
+                    } else if ($("input[name=name_sort]:checked").val() == "낮은순") {
+                        $("input[name=num_" + name_sort + "]").val("이름:낮은순");
+                    }
+                });
+                $("input:radio[name=evaluation_sort]").click(function(){
+                    if (evaluation_sort == 5){
+                        evaluation_sort = last_num
+                        last_num += 1
+                        $("input[name=num_" + evaluation_sort + "]").prop("type", "text");
+                    }
+                    if($("input[name=evaluation_sort]:checked").val() == "높은순"){
+                        $("input[name=num_" + evaluation_sort + "]").val("평점:높은순");
+                    } else if ($("input[name=evaluation_sort]:checked").val() == "낮은순") {
+                        $("input[name=num_" + evaluation_sort + "]").val("평점:낮은순");
+                    }
+                });
+                $("input:radio[name=time_sort]").click(function(){
+                    if (time_sort == 5){
+                        time_sort = last_num
+                        last_num += 1
+                        $("input[name=num_" + time_sort + "]").prop("type", "text");
+                    }
+                    if($("input[name=time_sort]:checked").val() == "빠른순"){
+                        $("input[name=num_" + time_sort + "]").val("시간:빠른순");
+                    } else if ($("input[name=time_sort]:checked").val() == "느린순") {
+                        $("input[name=num_" + time_sort + "]").val("시간:느린순");
+                    }
+                });
+            </script>
+            <style>
+                details { margin:5px 0 10px; }
+                details > summary { background:#e2dfff; color:#524fa1; padding:10px; outline:0; border-radius:5px; cursor:pointer; transition:background 0.5s; text-align:right; box-shadow: 1px 1px 2px gray;}
+                details > summary::-webkit-details-marker { background:#e2dfff; color:#524fa1; background-size:contain; transform:rotate3d(0, 0, 1, 90deg); transition:transform 0.25s;}
+                details[open] > summary::-webkit-details-marker { transform:rotate3d(0, 0, 1, 180deg);}
+                details[open] > summary { background:#e2dfff;}
+                details[open] > summary ~ * { animation:reveal 0.5s;}
+                .tpt { background:#e2dfff; color:#524fa1; margin:5px 0 10px; padding:5px 10px; line-height:25px; border-radius:5px; box-shadow: 1px 1px 2px gray;}
+                
+                @keyframes reveal {
+                    from { opacity:0; transform:translate3d(0, -30px, 0); }
+                    to { opacity:1; transform:translate3d(0, 0, 0); }
+                }
+            </style>
 
             <table class="table table-hover table-bordered">
                 
@@ -102,7 +242,7 @@
                         </a>
                     </li>
                     {% for i in range(1, data["totalPage"] + 1) %}
-                    <li class="page-item"><a class="page-link" data-page="{{ i }}" href="{{ url_for('index.main', page=i) }}">{{ i }}</a></li>
+                    <li class="page-item"><a class="page-link" data-page="{{ i }}" href="{{ url_for('index.main', page=i, sort=data['sort']) }}">{{ i }}</a></li>
                     {% endfor %}
                     <li class="page-item" id="last-page">
                         <a class="page-link" href="#" aria-label="Next">
